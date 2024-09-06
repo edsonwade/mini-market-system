@@ -1,5 +1,7 @@
 package code.with.vanilson.market.cart;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,10 @@ public class CartService {
 
     public List<Cart> getAllCarts() {
         return cartRepository.findAll();
+    }
+
+    public Page<Cart> getCarts(Pageable pageable) {
+        return cartRepository.findAll(pageable);
     }
 
     public Optional<Cart> findCartById(Long id) {

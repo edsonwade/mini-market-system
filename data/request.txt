@@ -45,3 +45,84 @@ cart
 }
 
 Item
+
+react issues
+https://stackoverflow.com/questions/71835697/create-react-app-dependency-version-issues-with-react-18  -solutions
+
+
+1. Set Environment Variable
+
+You can resolve this issue by setting an environment variable that tells Node.js to use the older OpenSSL configuration:
+
+On Linux/macOS:
+
+bash
+
+export NODE_OPTIONS=--openssl-legacy-provider
+
+
+On Windows (Command Prompt):
+
+cmd
+
+set NODE_OPTIONS=--openssl-legacy-provider
+
+On Windows (PowerShell):
+
+powershell
+
+$env:NODE_OPTIONS="--openssl-legacy-provider"
+
+This variable allows Node.js to use legacy OpenSSL providers that are compatible with older cryptographic operations.
+2. Add Environment Variable to .env File
+
+For convenience, especially if you want to make this change persistent across different environments, you can add the environment variable to your .env file in your project root:
+
+    Create a .env file in your project’s root directory if it doesn’t already exist.
+
+    Add the following line to the .env file:
+
+    plaintext
+
+NODE_OPTIONS=--openssl-legacy-provider
+
+This ensures that the environment variable is set every time you start your development server.
+3. Upgrade Dependencies
+
+Ensure all your dependencies are up-to-date, as newer versions of packages may have resolved compatibility issues with Node.js v17 and later:
+
+    Update npm:
+
+    bash
+
+npm install -g npm@latest
+
+Update dependencies:
+
+bash
+
+npm outdated
+npm update
+
+
+4. Consider Downgrading Node.js
+
+If the issue persists, consider downgrading Node.js to a stable version known to be compatible with your project’s dependencies. Node.js v16 LTS (Long-Term Support) is a good choice:
+
+    Use Node Version Manager (nvm):
+
+    If you have nvm (Node Version Manager) installed, you can easily switch Node.js versions:
+
+    bash
+
+nvm install 16
+nvm use 16
+
+If you don’t have nvm, you can install it from nvm's GitHub repository.
+
+Reinstall dependencies after downgrading:
+
+bash
+
+rm -rf node_modules
+npm install

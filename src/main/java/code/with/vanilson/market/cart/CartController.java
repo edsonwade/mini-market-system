@@ -1,6 +1,9 @@
 package code.with.vanilson.market.cart;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,8 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/carts")
+@CrossOrigin(origins = "http://localhost:3000"
+)
 public class CartController {
     private final CartService cartService;
 
@@ -38,8 +43,17 @@ public class CartController {
     }
 
     @GetMapping
-    public List<Cart> getAllCarts() {
-        return cartService.getAllCarts();
+    public ResponseEntity<Page<Cart>> getCarts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Cart> cartPage = cartService.getCarts(pageable);
+        return ResponseEntity.ok(cartPage);
+    }
+
+    @GetMapping(value = "/get-carts")
+    public ResponseEntity<List<Cart>> getAllCarts() {
+        return ResponseEntity.ok(cartService.getAllCarts());
     }
 
     @DeleteMapping("/delete-cart/{id}")
