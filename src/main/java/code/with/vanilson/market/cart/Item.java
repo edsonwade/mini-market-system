@@ -3,7 +3,6 @@ package code.with.vanilson.market.cart;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "tb_items")
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Item {
@@ -32,6 +30,12 @@ public class Item {
     @JoinColumn(name = "cart_id")
     @JsonBackReference
     private Cart cart;
+
+    public Item(Long id, String serialNumber, Cart cart) {
+        this.id = id;
+        this.serialNumber = serialNumber;
+        this.cart = cart;
+    }
 
     public Item(String serialNumber, Cart cart) {
         this.serialNumber = serialNumber;

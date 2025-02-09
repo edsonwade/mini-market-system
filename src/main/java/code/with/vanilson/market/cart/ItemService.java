@@ -14,6 +14,7 @@ import java.util.Optional;
  */
 @Service
 public class ItemService {
+    public static final String ITEM_NOT_FOUND_WITH_ID = "Item not found with id ";
     private final ItemRepository itemRepository;
     private final CartRepository cartRepository;
 
@@ -31,7 +32,7 @@ public class ItemService {
         if (item.isPresent()) {
             return item;
         }
-        throw new ResourceNotFoundException("Item not found with id " + id);
+        throw new ResourceNotFoundException(ITEM_NOT_FOUND_WITH_ID + id);
     }
 
     public Item createItem(Item item) {
@@ -42,12 +43,17 @@ public class ItemService {
     }
 
     public void deleteItem(Long id) {
-        itemRepository.deleteById(id);
+        Optional<Item> item = itemRepository.findById(id);
+        if (item.isPresent()) {
+            itemRepository.deleteById(id);
+            return;
+        }
+        throw new ResourceNotFoundException(ITEM_NOT_FOUND_WITH_ID + id);
     }
 
     public Item updateItem(Long id, Item updatedItem) {
         Item existingItem = itemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(ITEM_NOT_FOUND_WITH_ID + id));
         existingItem.setSerialNumber(updatedItem.getSerialNumber());
         existingItem.setCart(updatedItem.getCart());
         return itemRepository.save(existingItem);
