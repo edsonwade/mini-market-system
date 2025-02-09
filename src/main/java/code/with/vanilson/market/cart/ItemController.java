@@ -31,24 +31,36 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable Long id) {
-        return ResponseEntity.ok(itemService.findItemById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Item not found with id " + id)));
+        var item = itemService.findItemById(id);
+        return item.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create-item")
     public ResponseEntity<Item> createItem(@RequestBody @Valid Item item) {
         Item createdItem = itemService.createItem(item);
+        if (createdItem == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody @Valid Item item) {
+        var existingItem = itemService.findItemById(id);
+        if (existingItem.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         Item updatedItem = itemService.updateItem(id, item);
         return ResponseEntity.ok(updatedItem);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        var item = itemService.findItemById(id);
+        if (item.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         itemService.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
